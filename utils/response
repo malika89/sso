@@ -1,0 +1,41 @@
+package utils
+
+import (
+	"github.com/gin-gonic/gin"
+)
+
+type Errno struct {
+	Code    int
+	Message string
+}
+
+type ResponseJSON struct {
+	Code    int         `json:"code" example:"200"`
+	Message string      `json:"message" example:"success"`
+	Object  interface{} `json:"data"`
+}
+
+type ResponseObject struct {
+	Data       interface{} `json:"data"`
+	TotalCount interface{} `json:"total_count"`
+}
+
+var (
+	OK                 = 200
+	Error              = 400
+	NotFound           = 404
+	ServerError        = 500
+	)
+
+
+func NormalResponse(c *gin.Context, code int, message string, object interface{}) {
+	var resp ResponseJSON
+	resp = ResponseJSON{Code: code, Message: message, Object: object}
+	c.JSON(200, resp)
+}
+
+func BadResponse(c *gin.Context, code int, message string) {
+	var resp ResponseJSON
+	resp = ResponseJSON{Code: code, Message: message}
+	c.JSON(200, resp)
+}
