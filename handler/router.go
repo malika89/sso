@@ -8,9 +8,13 @@ import (
 func InitRoute() *gin.Engine{
 	r :=gin.New()
 	r.Use(gin.Recovery())
-	r.Handle("GET","/user/search",views.QueryUserByNameHandler)
-	r.Handle("POST","/user",views.AddUserHandler)
-	r.Handle("PUT","/user",views.UpdateUserHandler)
-	r.Handle("DELETE","/user",views.DeleteUserHandler)
+
+	v1 :=r.Group("/api/v1")
+	{
+		v1.GET("/user/search",views.QueryUserByNameHandler)
+	    v1.POST("/user",views.AddUserHandler)
+	    v1.PUT("/user",views.UpdateUserHandler)
+	    v1.DELETE("/user",views.DeleteUserHandler)
+	}
 	return r
 }
