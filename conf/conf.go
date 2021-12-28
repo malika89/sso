@@ -34,9 +34,15 @@ type Server struct {
 	Env string
 }
 
+func init() {
+	if err :=loadLocalConf();err !=nil {
+		fmt.Println("read config error",err)
+	}
+}
 
 func loadLocalConf() error {
-	viper.AddConfigPath("./conf.toml")
+	viper.SetConfigName("conf")
+	viper.AddConfigPath("./conf/")
 	viper.SetConfigType("toml")
 	if err :=viper.ReadInConfig();err !=nil{
 		return err
@@ -49,8 +55,6 @@ func loadLocalConf() error {
 
 func initApollo() error{
 	var err error
-
-	loadLocalConf()
 	fmt.Println("load local config from ..")
 	appConfig := &config.AppConfig{
 		AppID:          Conf.Apollo.AppID,
