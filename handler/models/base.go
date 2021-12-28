@@ -1,31 +1,30 @@
 package models
 
 import (
-	"encoding/json"
 	"fmt"
-	_ "github.com/bmizerany/pq"
 	"github.com/go-xorm/xorm"
-	//"sso/conf"
 	"github.com/goinggo/mapstructure"
+	"sso/conf"
 )
 
 var DBX *xorm.Engine
+var cfg =conf.Conf
 
-func init()  {
+func init() {
 	initDB()
-
 }
+
 func initDB() error {
 	if DBX ==nil{
 		var err error
 		//engine, err = xorm.NewEngine(conf.Client.GetValue("db.driver"), conf.Client.GetValue("db.host"))
 		connStr := fmt.Sprintf(`host=%s port=%s user=%s password=%s dbname=%s sslmode=disable`,
-			"10.127.1.25", "5432","root", "postgres", "xops_sso")
+			"127.0.0.1", "5432","root", "postgres", "xops_sso")
 		DBX, err = xorm.NewEngine("postgres",connStr)
-		DBX.ShowSQL(true)
 		if err !=nil{
 			return err
 		}
+		DBX.ShowSQL(true)
 		fmt.Println("init database success")
 	}
 	return nil
@@ -68,23 +67,28 @@ func(t *BaseModel) Query(keyword string,value string ) ([]map[string]string,erro
 	return infLst,err
 }
 
+func(t *BaseModel) Add() error {
+	dbSession := t.GetSession()
+	if _, err := dbSession.Insert(t.Model); err != nil {
+		return err
+	}
+	return nil
+}
 
 func(t *BaseModel) Update() error {
-	var modelMap map[string]interface{}
-	byteValue,_ :=json.Marshal(t.Model)
-	json.Unmarshal(byteValue,modelMap)
-
 	dbSession := t.GetSession()
-	_ ,err := dbSession.ID(modelMap["Id"].(string)).Update(&t.Model)
-	return err
+	modelMap :=t.Model.(map[string]interface{})
+	if _, err := dbSession.ID(modelMap["id"].(string)).Update(modelMap); err != nil {
+		return err
+	}
+	return nil
 }
 
+//Delete 支持批量删除
 func(t *BaseModel) Delete() error {
-	var modelMap map[string]interface{}
-	byteValue,_ :=json.Marshal(t.Model)
-	json.Unmarshal(byteValue,modelMap)
 	dbSession := t.GetSession()
-	_ ,err := dbSession.ID(modelMap["Id"].(string)).Delete(&t.Model)
-	return err
+	if _, err := dbSession.Delete(t.Model); err != nil {
+		return err
+	}
+	return nil
 }
-
