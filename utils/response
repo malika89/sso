@@ -13,7 +13,7 @@ type ResponseJSON struct {
 	Code    int         `json:"code" example:"200"`
 	Message string      `json:"message" example:"success"`
 	Object  interface{} `json:"result"`
-	TotalCount interface{} `json:"total_count"`
+	Total interface{} `json:"total"`
 }
 
 var (
@@ -26,12 +26,12 @@ var (
 
 func NormalResponse(c *gin.Context, code int, message string, object interface{},total int) {
 	var resp ResponseJSON
-	resp = ResponseJSON{Code: code, Message: message, Object: object,TotalCount: total}
+	resp = ResponseJSON{Code: code, Message: message, Object: object,Total: total}
 	c.JSON(200, resp)
 }
 
 func BadResponse(c *gin.Context, code int, message string) {
 	var resp ResponseJSON
-	resp = ResponseJSON{Code: code, Message: message,Object: nil,TotalCount: 0}
+	resp = ResponseJSON{Code: code, Message: message,Object: nil,Total: 0}
 	c.JSON(200, resp)
 }
