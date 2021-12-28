@@ -1,10 +1,10 @@
-[server]
-Host=""
+[Server]
+Host="0.0.0.0"
 Port=8081
-Env=""
+Env="dev"
 
 
-[apollo]
+[Apollo]
 AppID=""
 Cluster="dev"
 IP= "http://106.54.227.205:8080"
