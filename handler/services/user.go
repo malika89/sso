@@ -10,7 +10,7 @@ type service struct {
 
 func GetService() *service  {
 	var serviceApp service
-	serviceApp.Table = "user"
+	serviceApp.Table = "users"
 	serviceApp.Model = models.User{}
 	return &serviceApp
 }
