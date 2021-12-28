@@ -12,11 +12,7 @@ type Errno struct {
 type ResponseJSON struct {
 	Code    int         `json:"code" example:"200"`
 	Message string      `json:"message" example:"success"`
-	Object  interface{} `json:"data"`
-}
-
-type ResponseObject struct {
-	Data       interface{} `json:"data"`
+	Object  interface{} `json:"result"`
 	TotalCount interface{} `json:"total_count"`
 }
 
@@ -28,14 +24,14 @@ var (
 	)
 
 
-func NormalResponse(c *gin.Context, code int, message string, object interface{}) {
+func NormalResponse(c *gin.Context, code int, message string, object interface{},total int) {
 	var resp ResponseJSON
-	resp = ResponseJSON{Code: code, Message: message, Object: object}
+	resp = ResponseJSON{Code: code, Message: message, Object: object,TotalCount: total}
 	c.JSON(200, resp)
 }
 
 func BadResponse(c *gin.Context, code int, message string) {
 	var resp ResponseJSON
-	resp = ResponseJSON{Code: code, Message: message}
+	resp = ResponseJSON{Code: code, Message: message,Object: nil,TotalCount: 0}
 	c.JSON(200, resp)
 }
