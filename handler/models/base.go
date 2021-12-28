@@ -20,7 +20,7 @@ func initDB() error {
 		var err error
 		//engine, err = xorm.NewEngine(conf.Client.GetValue("db.driver"), conf.Client.GetValue("db.host"))
 		connStr := fmt.Sprintf(`host=%s port=%s user=%s password=%s dbname=%s sslmode=disable`,
-			"10.25.72.97", "5432","postgres", "postgres", "xops_sso")
+			"10.127.1.25", "5432","root", "postgres", "xops_sso")
 		DBX, err = xorm.NewEngine("postgres",connStr)
 		DBX.ShowSQL(true)
 		if err !=nil{
