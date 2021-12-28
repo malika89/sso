@@ -2,9 +2,9 @@ package models
 
 import (
 	"encoding/json"
-	_ "github.com/go-sql-driver/mysql"
-	"github.com/go-xorm/xorm"
 	"fmt"
+	_ "github.com/bmizerany/pq"
+	"github.com/go-xorm/xorm"
 	//"sso/conf"
 	"github.com/goinggo/mapstructure"
 )
@@ -16,13 +16,18 @@ func init()  {
 
 }
 func initDB() error {
-	var err error
-	//engine, err = xorm.NewEngine(conf.Client.GetValue("db.driver"), conf.Client.GetValue("db.host"))
-	DBX, err = xorm.NewEngine("mysql","root:PACloud@20!^@tcp(127.0.0.1:3306)/sso?charset=utf8")
-	if err !=nil{
-		return err
+	if DBX ==nil{
+		var err error
+		//engine, err = xorm.NewEngine(conf.Client.GetValue("db.driver"), conf.Client.GetValue("db.host"))
+		connStr := fmt.Sprintf(`host=%s port=%s user=%s password=%s dbname=%s sslmode=disable`,
+			"10.25.72.97", "5432","postgres", "postgres", "xops_sso")
+		DBX, err = xorm.NewEngine("postgres",connStr)
+		DBX.ShowSQL(true)
+		if err !=nil{
+			return err
+		}
+		fmt.Println("init database success")
 	}
-	fmt.Println("init database success")
 	return nil
 }
 
@@ -39,6 +44,9 @@ func(t *BaseModel) GetSession() *xorm.Session {
 	if t.Table == "" {
 		t.Table =t.TableName()
 	}
+	if DBX == nil{
+		initDB()
+	}
 	dbSession := DBX.Table(t.Table)
 	return dbSession
 
@@ -54,10 +62,9 @@ func(t *BaseModel) Exists(keyword string,value string ) (bool,error) {
 	return dbSession.Exist(&infStruct)
 }
 
-func(t *BaseModel) Query(keyword string,value string ) ([]interface{},error) {
-	var infLst []interface{}
+func(t *BaseModel) Query(keyword string,value string ) ([]map[string]string,error) {
 	dbSession := t.GetSession()
-	err := dbSession.Where(fmt.Sprintf("%s=%s",keyword,value)).Find(&infLst)
+	infLst,err := dbSession.Where(keyword +" = ?",value).QueryString()
 	return infLst,err
 }
 
