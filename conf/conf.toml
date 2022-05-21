@@ -7,7 +7,7 @@ Env="dev"
 [Apollo]
 AppID=""
 Cluster="dev"
-IP= "http://106.54.227.205:8080"
+IP= "http://10.54.227.205:8080"
 NamespaceName="dubbo"
 IsBackupConfig=true
 Secret="6ce3ff7e96a24335a9634fe9abca6d51"
